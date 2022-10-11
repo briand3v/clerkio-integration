@@ -11,9 +11,7 @@
     },
     "free": true,
     "type": "free",
-    "availableCountries": [
-      "*"
-    ]
+    "availableCountries": ["*"]
   },
   "builders": {
     "messages": "1.x",
@@ -29,7 +27,8 @@
     "vtex.graphql-server": "1.x",
     "vtex.render-runtime": "8.x",
     "vtex.store-resources": "0.x",
-    "vtex.css-handles": "0.x"
+    "vtex.css-handles": "0.x",
+    "vtex.order-manager": "0.x"
   },
   "policies": [
     {

@@ -3,6 +3,7 @@ import { useRuntime } from 'vtex.render-runtime'
 import { session } from 'vtex.store-resources/Queries'
 import { useQuery } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
+import { useOrderForm } from 'vtex.order-manager/OrderForm'
 
 import { DATA_CATEGORY, DATA_KEYWORDS, logicTypes } from './constants'
 import {
@@ -29,6 +30,14 @@ interface Session {
   }
 }
 
+function isCustomEvent(
+  event: Event
+): event is CustomEvent<{
+  orderForm?: unknown
+}> {
+  return 'detail' in event
+}
+
 const CSS_HANDLES = ['container'] as const
 
 const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
@@ -47,6 +56,8 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
     },
   } = useRuntime()
 
+  const { setOrderForm } = useOrderForm()
+
   const { data, loading } = useQuery<Session>(session, {
     ssr: false,
   })
@@ -60,6 +71,33 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
       Clerk('content', `.${adjustedClassName}`)
     }
   }, [adjustedClassName, templateName, loading])
+
+  useEffect(() => {
+    const updateOrderformEvent = (event: Event) => {
+      // eslint-disable-next-line no-console
+      console.log('clerk:orderform:updated', { event })
+      event.preventDefault()
+      if (!isCustomEvent(event)) {
+        throw new Error('Invalid event')
+      }
+
+      const { orderForm } = event.detail
+
+      if (orderForm) {
+        setOrderForm(orderForm)
+      }
+    }
+
+    window.removeEventListener('clerk:orderform:updated', updateOrderformEvent)
+    window.addEventListener('clerk:orderform:updated', updateOrderformEvent)
+
+    return () => {
+      window.removeEventListener(
+        'clerk:orderform:updated',
+        updateOrderformEvent
+      )
+    }
+  }, [setOrderForm])
 
   const dataProps = createClerkDataProps({
     contentLogic,
