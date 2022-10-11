@@ -38,6 +38,7 @@ interface ClerkProduct {
    * @memberOf ClerkProduct
    */
   created_at: number
+  sku_id: string
 }
 
 interface ClerkCategory {

@@ -25,6 +25,7 @@ const createProductsQuery = (
         }
       }
       items {
+        itemId
         images {
           imageUrl
         }

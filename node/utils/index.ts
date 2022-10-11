@@ -143,6 +143,7 @@ export function transformProductToClerk(
 
   return {
     id: product.productId,
+    sku_id: product.items[0].itemId,
     name: product.productName,
     description: product.description,
     price:

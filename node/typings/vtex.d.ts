@@ -25,7 +25,7 @@ interface ProductInfo {
     sellingPrice: PriceRange
     listPrice: PriceRange
   }
-  items: Images[]
+  items: Items[]
   link: string
   linkText: string
   categoryTree: Category[]
@@ -38,7 +38,8 @@ interface PriceRange {
   lowPrice: number
 }
 
-interface Images {
+interface Items {
+  itemId: string
   images: ImageUrl[]
 }
 interface ImageUrl {
