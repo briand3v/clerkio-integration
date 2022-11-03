@@ -85,6 +85,10 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
 
       if (orderForm) {
         setOrderForm(orderForm)
+      } else {
+        console.error(
+          'clerk:orderform:updated: Event does not provide an order form'
+        )
       }
     }
 
