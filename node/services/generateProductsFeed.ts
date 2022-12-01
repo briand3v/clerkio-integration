@@ -92,6 +92,9 @@ export async function generateProductsFeed(ctx: Context) {
     const [from, to] = iterationLimits(i)
 
     productAndSkuIdsPromises.push(catalog.getProductAndSkuIds(from, to))
+
+    // eslint-disable-next-line no-await-in-loop
+    await pacer(1500)
   }
 
   let productAndSkuIds
@@ -155,9 +158,10 @@ export async function generateProductsFeed(ctx: Context) {
         await pacer(1000)
       }
 
-      const productFeed = products.map(product =>
-        transformProductToClerk(product, rootPath)
-      )
+      const productFeed = products
+        .map(product => transformProductToClerk(product, rootPath))
+        // Filter undefined products returned from the previous map function
+        .filter(product => product) as ClerkProduct[]
 
       await feedManager.saveProductFeed({ productFeed, bindingId })
 

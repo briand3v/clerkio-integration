@@ -46,3 +46,23 @@ export const getProductIdFromContext = ({
 }) => {
   return type === 'product' ? id : ''
 }
+
+export const createContentParamArgs = (dataProps: DataProps) => {
+  if (!Object.keys(dataProps).length) {
+    return null
+  }
+
+  const contentParamArgs: ContentParamArgs = {}
+
+  for (const [key, value] of Object.entries(dataProps)) {
+    const argKey = key.replace('data-', '')
+
+    if (argKey === 'products') {
+      continue
+    }
+
+    contentParamArgs[argKey] = value
+  }
+
+  return contentParamArgs
+}

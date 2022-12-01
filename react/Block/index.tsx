@@ -8,6 +8,7 @@ import { useOrderForm } from 'vtex.order-manager/OrderForm'
 import { DATA_CATEGORY, DATA_KEYWORDS, logicTypes } from './constants'
 import {
   createClerkDataProps,
+  createContentParamArgs,
   ensureSingleWordClass,
   getCategoryIdFromContext,
   getProductIdFromContext,
@@ -65,14 +66,6 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
   const handles = useCssHandles(CSS_HANDLES)
 
   useEffect(() => {
-    const { Clerk } = window
-
-    if (adjustedClassName && templateName && Clerk && !loading) {
-      Clerk('content', `.${adjustedClassName}`)
-    }
-  }, [adjustedClassName, templateName, loading])
-
-  useEffect(() => {
     const updateOrderformEvent = (event: Event) => {
       // eslint-disable-next-line no-console
       console.log('clerk:orderform:updated', { event })
@@ -114,6 +107,24 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
       productIds: `[${getProductIdFromContext({ type, id })}]`,
     },
   })
+
+  const contentParamArgs = createContentParamArgs(dataProps)
+
+  useEffect(() => {
+    const { Clerk } = window
+
+    if (adjustedClassName && templateName && Clerk && !loading) {
+      Clerk(
+        'content',
+        `.${adjustedClassName}`,
+        (content: ClerkContentInterfaceObject) => {
+          if (contentParamArgs) {
+            content.param(contentParamArgs)
+          }
+        }
+      )
+    }
+  }, [adjustedClassName, contentParamArgs, loading, templateName])
 
   return adjustedClassName && templateName ? (
     <div className={handles.container}>
