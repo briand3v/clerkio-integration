@@ -39,6 +39,8 @@ interface ClerkProduct {
    */
   created_at: number
   sku_id: string
+  measurement_unit: string
+  unit_multiplier: number
 }
 
 interface ClerkCategory {
