@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.7-hkignore] - 2023-01-19
+
+### Added
+
+- Two more attributes added (measurement_unit, unit_multiplier) to the product feed to send to clerk. 
+
 ## [Unreleased]
 
 ## [1.1.5] - 2022-11-25
