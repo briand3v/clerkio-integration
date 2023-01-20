@@ -29,6 +29,8 @@ const createProductsQuery = (
         images {
           imageUrl
         }
+        measurementUnit
+        unitMultiplier
       }
       link
       linkText

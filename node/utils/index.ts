@@ -154,6 +154,8 @@ export function transformProductToClerk(
     description: product.description,
     price: sellingPrice.highPrice,
     list_price: listPrice.highPrice,
+    measurement_unit: product.items[0].measurementUnit,
+    unit_multiplier: product.items[0].unitMultiplier,
     image: product.items[0].images[0].imageUrl,
     url: productUrl,
     categories: product.categoryTree.map(category => category.id),

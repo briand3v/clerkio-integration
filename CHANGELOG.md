@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `measurement_unit` and `unit_multiplier` attributes added to the product feed.
+
 ## [1.1.5] - 2022-11-25
 
 ## [1.1.4] - 2022-11-14

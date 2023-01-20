@@ -41,6 +41,8 @@ interface PriceRange {
 interface Items {
   itemId: string
   images: ImageUrl[]
+  measurementUnit: string
+  unitMultiplier: number
 }
 interface ImageUrl {
   imageUrl: string
