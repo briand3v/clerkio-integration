@@ -57,7 +57,7 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
     },
   } = useRuntime()
 
-  const { setOrderForm } = useOrderForm()
+  const { setOrderForm, orderForm } = useOrderForm()
 
   const { data, loading } = useQuery<Session>(session, {
     ssr: false,
@@ -65,7 +65,13 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
 
   const handles = useCssHandles(CSS_HANDLES)
 
+  const [updateClerkContent, setUpdateClerkContent] = React.useState<boolean>(true)
+
   useEffect(() => {
+    // dispatch custom event to listen when orderForm change 
+    const updateCartEvent = new CustomEvent('clerk:content:updated', { detail: { orderForm } });
+    window.dispatchEvent(updateCartEvent);
+
     const updateOrderformEvent = (event: Event) => {
       // eslint-disable-next-line no-console
       console.log('clerk:orderform:updated', { event })
@@ -77,6 +83,7 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
       const { orderForm } = event.detail
 
       if (orderForm) {
+        setUpdateClerkContent(false)
         setOrderForm(orderForm)
       } else {
         console.error(
@@ -84,7 +91,6 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
         )
       }
     }
-
     window.removeEventListener('clerk:orderform:updated', updateOrderformEvent)
     window.addEventListener('clerk:orderform:updated', updateOrderformEvent)
 
@@ -94,7 +100,7 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
         updateOrderformEvent
       )
     }
-  }, [setOrderForm])
+  }, [orderForm, setOrderForm])
 
   const dataProps = createClerkDataProps({
     contentLogic,
@@ -112,8 +118,7 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
 
   useEffect(() => {
     const { Clerk } = window
-
-    if (adjustedClassName && templateName && Clerk && !loading) {
+    if (adjustedClassName && templateName && Clerk && !loading && !updateClerkContent) {
       Clerk(
         'content',
         `.${adjustedClassName}`,
@@ -124,7 +129,7 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
         }
       )
     }
-  }, [adjustedClassName, contentParamArgs, loading, templateName])
+  }, [adjustedClassName, contentParamArgs, loading, templateName, updateClerkContent])
 
   return adjustedClassName && templateName ? (
     <div className={handles.container}>
