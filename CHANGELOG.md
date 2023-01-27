@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [1.1.8] - 2023-01-27
+## [1.1.7-hkignore-beta.1] - 2023-01-27
 
-### fix
+### Fixed
 
 - Fixed issue with re-render clerk content when `orderForm` event is dispatched outside this app integration
 
