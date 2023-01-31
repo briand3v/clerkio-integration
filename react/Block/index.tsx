@@ -118,7 +118,7 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
 
   useEffect(() => {
     const { Clerk } = window
-    if (adjustedClassName && templateName && Clerk && !loading && !updateClerkContent) {
+    if (adjustedClassName && templateName && Clerk && !loading && updateClerkContent) {
       Clerk(
         'content',
         `.${adjustedClassName}`,
