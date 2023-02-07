@@ -4,6 +4,7 @@ import { session } from 'vtex.store-resources/Queries'
 import { useQuery } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
 import { useOrderForm } from 'vtex.order-manager/OrderForm'
+import { useOrderItems } from 'vtex.order-items/OrderItems'
 
 import { DATA_CATEGORY, DATA_KEYWORDS, logicTypes } from './constants'
 import {
@@ -34,7 +35,7 @@ interface Session {
 function isCustomEvent(
   event: Event
 ): event is CustomEvent<{
-  orderForm?: unknown
+  newItems?: unknown
 }> {
   return 'detail' in event
 }
@@ -57,7 +58,8 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
     },
   } = useRuntime()
 
-  const { setOrderForm } = useOrderForm()
+  const { addItems } = useOrderItems()
+  const { orderForm } = useOrderForm()
 
   const { data, loading } = useQuery<Session>(session, {
     ssr: false,
@@ -65,7 +67,13 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
 
   const handles = useCssHandles(CSS_HANDLES)
 
+  const [updateClerkContent, setUpdateClerkContent] = React.useState<boolean>(true)
+
   useEffect(() => {
+    // dispatch custom event to listen when orderForm change 
+    const updateCartEvent = new CustomEvent('clerk:content:updated', { detail: { orderForm } });
+    window.dispatchEvent(updateCartEvent);
+
     const updateOrderformEvent = (event: Event) => {
       // eslint-disable-next-line no-console
       console.log('clerk:orderform:updated', { event })
@@ -74,17 +82,17 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
         throw new Error('Invalid event')
       }
 
-      const { orderForm } = event.detail
+      const { newItems } = event.detail
 
-      if (orderForm) {
-        setOrderForm(orderForm)
+      if (newItems) {
+        setUpdateClerkContent(false)
+        addItems(newItems)
       } else {
         console.error(
-          'clerk:orderform:updated: Event does not provide an order form'
+          'clerk:orderform:updated: Event does not provide an items to add'
         )
       }
     }
-
     window.removeEventListener('clerk:orderform:updated', updateOrderformEvent)
     window.addEventListener('clerk:orderform:updated', updateOrderformEvent)
 
@@ -94,7 +102,7 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
         updateOrderformEvent
       )
     }
-  }, [setOrderForm])
+  }, [orderForm])
 
   const dataProps = createClerkDataProps({
     contentLogic,
@@ -112,8 +120,7 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
 
   useEffect(() => {
     const { Clerk } = window
-
-    if (adjustedClassName && templateName && Clerk && !loading) {
+    if (adjustedClassName && templateName && Clerk && !loading && updateClerkContent) {
       Clerk(
         'content',
         `.${adjustedClassName}`,
@@ -124,7 +131,7 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
         }
       )
     }
-  }, [adjustedClassName, contentParamArgs, loading, templateName])
+  }, [adjustedClassName, contentParamArgs, loading, templateName, updateClerkContent])
 
   return adjustedClassName && templateName ? (
     <div className={handles.container}>
