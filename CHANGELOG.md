@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.1.8-hkignore-beta.3] - 2023-02-07
+
+### Fixed
+
+- Fixed some issues caused by using `UpdateOrderForm`, instead use `addItems`
+
 ## [1.1.8-hkignore-beta.2] - 2023-01-27
 
 ### Fixed
