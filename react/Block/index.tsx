@@ -4,6 +4,7 @@ import { session } from 'vtex.store-resources/Queries'
 import { useQuery } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
 import { useOrderForm } from 'vtex.order-manager/OrderForm'
+import { useOrderItems } from 'vtex.order-items/OrderItems'
 
 import { DATA_CATEGORY, DATA_KEYWORDS, logicTypes } from './constants'
 import {
@@ -34,7 +35,7 @@ interface Session {
 function isCustomEvent(
   event: Event
 ): event is CustomEvent<{
-  orderForm?: unknown
+  newItems?: unknown
 }> {
   return 'detail' in event
 }
@@ -57,7 +58,8 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
     },
   } = useRuntime()
 
-  const { setOrderForm, orderForm } = useOrderForm()
+  const { addItems } = useOrderItems()
+  const { orderForm } = useOrderForm()
 
   const { data, loading } = useQuery<Session>(session, {
     ssr: false,
@@ -80,14 +82,14 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
         throw new Error('Invalid event')
       }
 
-      const { orderForm } = event.detail
+      const { newItems } = event.detail
 
-      if (orderForm) {
+      if (newItems) {
         setUpdateClerkContent(false)
-        setOrderForm(orderForm)
+        addItems(newItems)
       } else {
         console.error(
-          'clerk:orderform:updated: Event does not provide an order form'
+          'clerk:orderform:updated: Event does not provide an items to add'
         )
       }
     }
@@ -100,7 +102,7 @@ const ClerkIoBlock: StorefrontFunctionComponent<BlockProps> = ({
         updateOrderformEvent
       )
     }
-  }, [orderForm, setOrderForm])
+  }, [orderForm])
 
   const dataProps = createClerkDataProps({
     contentLogic,
